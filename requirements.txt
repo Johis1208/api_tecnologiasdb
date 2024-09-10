@@ -1,6 +1,6 @@
-# Dev environment
-pip
-autopep8
-
-# App
-flask
+fastapi
+uvicorn
+streamlit
+requests
+joblib
+scikit-learn

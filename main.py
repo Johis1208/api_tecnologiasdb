@@ -1,15 +1,16 @@
-import os
+from fastapi import FastAPI
+from pydantic import BaseModel
+from src.predictory import PrediccionNacionalidad
+app = FastAPI()
 
-from flask import Flask, send_file
+class Texts(BaseModel):
+    texts: list[str]
 
-app = Flask(__name__)
+predictor = PrediccionNacionalidad( "models/naive_bayes.pkl","models/nationality_vectorizer.pkl")
 
-@app.route("/")
-def index():
-    return send_file('src/index.html')
-
-def main():
-    app.run(port=int(os.environ.get('PORT', 80)))
-
-if __name__ == "__main__":
-    main()
+@app.post("/predict")
+def predict_nationality(data: Texts):
+    predictions = predictor.predict(data.texts)
+    # Asegurarse de que las predicciones sean una lista de strings
+    predictions_list = predictions.tolist() if hasattr(predictions, 'tolist') else predictions
+    return {"predictions": predictions_list}
